@@ -1,0 +1,24 @@
+{
+  "name": "assured-chat",
+  "version": "0.0.0",
+  "description": "Know who your messages are coming from",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R spec --compilers coffee:coffee-script/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidbanham/assured-chat"
+  },
+  "author": "david@banham.id.au",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/davidbanham/assured-chat/issues"
+  },
+  "devDependencies": {
+    "mocha": "~1.18.2"
+  },
+  "dependencies": {
+    "coffee-script": "~1.7.1"
+  }
+}
