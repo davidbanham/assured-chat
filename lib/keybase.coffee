@@ -9,7 +9,11 @@ KeyBase.prototype.sign = (msg, cb) ->
     cb err, data
 
 KeyBase.prototype.verify = (msg, cb) ->
-  verifier = spawn 'keybase', ['--no-color', 'verify', '-m', msg]
+  @spawn ['verify', '-m', msg], cb
+
+KeyBase.prototype.spawn = (args, cb) ->
+  args.unshift '--no-color'
+  verifier = spawn 'keybase', args
 
   output = ''
   errors = null
