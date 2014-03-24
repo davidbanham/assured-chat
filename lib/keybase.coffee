@@ -5,8 +5,7 @@ KeyBase = ->
   return this
 
 KeyBase.prototype.sign = (msg, cb) ->
-  exec "keybase sign --no-color -m #{msg}", (err, data) ->
-    cb err, data
+  @spawn ['sign', '-m', msg], cb
 
 KeyBase.prototype.verify = (msg, cb) ->
   @spawn ['verify', '-m', msg], cb

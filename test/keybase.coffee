@@ -63,4 +63,10 @@ describe 'keybase', ->
       assert.notEqual err, null
       done()
 
-  it 'should sign a message'
+  it 'should sign a message', (done) ->
+    message = 'hai there'
+    keybase.sign message, (err, info, output) ->
+      keybase.decrypt output, (err, info, output) ->
+        assert.equal info.signer, 'you'
+        assert.equal output, 'hai there\n'
+        done()
