@@ -11,15 +11,22 @@ KeyBase.prototype.sign = (msg, cb) ->
 KeyBase.prototype.verify = (msg, cb) ->
   @spawn ['verify', '-m', msg], cb
 
+KeyBase.prototype.decrypt = (msg, cb) ->
+  @spawn ['decrypt', '-m', msg], cb
+
 KeyBase.prototype.spawn = (args, cb) ->
   args.unshift '--no-color'
   verifier = spawn 'keybase', args
 
-  output = ''
+  stderr = ''
+  stdout = ''
   errors = null
 
   verifier.stderr.on 'data', (data) ->
-    output += data.toString()
+    stderr += data.toString()
+
+  verifier.stdout.on 'data', (data) ->
+    stdout += data.toString()
 
   verifier.stdin.end()
 
@@ -28,24 +35,29 @@ KeyBase.prototype.spawn = (args, cb) ->
 
   verifier.on 'exit', (code) ->
     if errors
-      return cb errors, {}, output
+      return cb errors, {}, stderr
 
     if code > 0
-      return cb new Error(code), {}, output
+      return cb new Error(code), {}, stderr
 
     data = {}
 
-    lines = output.split '\n'
+    err_lines = stderr.split '\n'
 
-    for line in lines
+    for line in err_lines
       if line.indexOf('info') > -1
-        if line.indexOf 'Valid signature from'
+        if line.indexOf('Valid signature from keybase user') > -1
+          arr = line.split 'info: Valid signature from keybase user '
+          signer = arr[1]
+          data.signer = signer.split(' ')[0]
+        else if line.indexOf('Valid signature from ') > -1
           arr = line.split 'info: Valid signature from '
-          data.signer = arr[1]
+          signer = arr[1]
+          data.signer = signer.split(' ')[0]
         else
           data.info ?= []
           data.info.push line.split('info: ')[1]
 
-    return cb errors, data, output
+    return cb errors, data, stdout
 
 module.exports = new KeyBase()
