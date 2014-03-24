@@ -39,8 +39,12 @@ KeyBase.prototype.spawn = (args, cb) ->
 
     for line in lines
       if line.indexOf('info') > -1
-        arr = line.split 'info: Valid signature from '
-        data.signer = arr[1]
+        if line.indexOf 'Valid signature from'
+          arr = line.split 'info: Valid signature from '
+          data.signer = arr[1]
+        else
+          data.info ?= []
+          data.info.push line.split('info: ')[1]
 
     return cb errors, data, output
 
